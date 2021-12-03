@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WemaMobileEmployeeService.Models;
+using WemaMobileEmployeeService.Repositories;
 
 namespace WemaMobileEmployeeService
 {
@@ -27,6 +30,16 @@ namespace WemaMobileEmployeeService
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddScoped<EmployeeRepository, EmployeeService>();
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+
+
+            #region Connection String
+            services.AddDbContext<WemaMobileTrainingContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("Wema_BIT")));
+            #endregion
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
